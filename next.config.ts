@@ -8,7 +8,12 @@ const nextConfig: NextConfig = {
                 hostname: "imgproxy.cryptojobslist.com",
                 port: "",
                 pathname: "/**",
-                search: "",
+            },
+            {
+                protocol: "https",
+                hostname: "images.unsplash.com",
+                port: "",
+                pathname: "/**",
             },
         ],
     },

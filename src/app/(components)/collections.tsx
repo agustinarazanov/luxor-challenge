@@ -1,14 +1,12 @@
 "use client";
 
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { collection } from "@/db/schema";
+import type { CollectionSelect } from "@/types";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Bids from "./bids";
 import Loading from "../loading";
-
-type Collection = typeof collection.$inferSelect;
 
 const fetchCollections = async (userId?: string) => {
     try {
@@ -21,7 +19,7 @@ const fetchCollections = async (userId?: string) => {
     }
 };
 
-function Collections({ collections, owner }: { collections: Collection[]; owner: boolean }) {
+function Collections({ collections, owner }: { collections: CollectionSelect[]; owner: boolean }) {
     return (
         <div className="space-y-4">
             {owner ? (
@@ -76,13 +74,13 @@ function Collections({ collections, owner }: { collections: Collection[]; owner:
 
 export default function Listing() {
     const { data: session } = useSession();
-    const [collections, setCollections] = useState<Collection[] | undefined>();
-    const [userCollections, setUserCollections] = useState<Collection[] | undefined>();
+    const [collections, setCollections] = useState<CollectionSelect[] | undefined>();
+    const [userCollections, setUserCollections] = useState<CollectionSelect[] | undefined>();
 
     useEffect(() => {
         fetchCollections(session?.user.id).then(setUserCollections);
         fetchCollections().then(setCollections);
-    }, []);
+    }, [session?.user.id]);
 
     if (!collections || !userCollections) return <Loading />;
 

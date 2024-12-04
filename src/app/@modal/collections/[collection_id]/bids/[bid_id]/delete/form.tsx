@@ -1,16 +1,16 @@
 "use client";
 
-import { collection } from "@/db/schema";
+import { BidInsert } from "@/types";
 import { useParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function DeleteBid() {
-    const { handleSubmit } = useForm<typeof collection.$inferInsert>();
+    const { handleSubmit } = useForm<BidInsert>();
     const { collection_id, bid_id } = useParams<{ collection_id: string, bid_id: string }>();
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<typeof collection.$inferInsert> = async (data) => {
+    const onSubmit: SubmitHandler<BidInsert> = async () => {
         const res = await fetch(`/api/collections/${collection_id}/bids/${bid_id}`, { method: "DELETE" });
         if (res.ok) {
             toast.success("Bid removed");

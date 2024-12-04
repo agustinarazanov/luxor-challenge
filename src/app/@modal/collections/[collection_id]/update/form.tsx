@@ -1,14 +1,13 @@
 "use client";
 
-import { collection } from "@/db/schema";
-import { useSession } from "next-auth/react";
+import { CollectionInsert } from "@/types";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function EditCollection() {
-    const { register, handleSubmit, reset } = useForm<typeof collection.$inferInsert>();
+    const { register, handleSubmit, reset } = useForm<CollectionInsert>();
     const { collection_id } = useParams<{ collection_id: string }>();
 
     useEffect(() => {
@@ -20,11 +19,11 @@ export default function EditCollection() {
             }
         }
         fetchData();
-    }, []);
+    }, [collection_id, reset]);
 
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<typeof collection.$inferInsert> = async (data) => {
+    const onSubmit: SubmitHandler<CollectionInsert> = async (data) => {
         const res = await fetch(`/api/collections/${collection_id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -51,7 +50,7 @@ export default function EditCollection() {
                     <input
                         className="bg-neutral-900 border border-gray-300 rounded"
                         type={type}
-                        {...register(name as keyof typeof collection.$inferInsert)}
+                        {...register(name as keyof CollectionInsert)}
                     />
                 </div>
             ))}

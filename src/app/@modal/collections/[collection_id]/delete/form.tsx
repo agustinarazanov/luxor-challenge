@@ -1,16 +1,16 @@
 "use client";
 
-import { collection } from "@/db/schema";
+import { CollectionInsert } from "@/types";
 import { useParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function DeleteCollection() {
-    const { handleSubmit } = useForm<typeof collection.$inferInsert>();
+    const { handleSubmit } = useForm<CollectionInsert>();
     const { collection_id } = useParams<{ collection_id: string }>();
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<typeof collection.$inferInsert> = async (data) => {
+    const onSubmit: SubmitHandler<CollectionInsert> = async () => {
         const res = await fetch(`/api/collections/${collection_id}`, { method: "DELETE" });
         if (res.ok) {
             toast.success("Collection removed");

@@ -1,17 +1,17 @@
 "use client";
 
-import { collection } from "@/db/schema";
+import { CollectionInsert } from "@/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function CreateCollection() {
-    const { register, handleSubmit } = useForm<typeof collection.$inferInsert>();
+    const { register, handleSubmit } = useForm<CollectionInsert>();
     const router = useRouter();
     const { data: session } = useSession();
 
-    const onSubmit: SubmitHandler<typeof collection.$inferInsert> = async (data) => {
+    const onSubmit: SubmitHandler<CollectionInsert> = async (data) => {
         const res = await fetch("/api/collections", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -38,7 +38,7 @@ export default function CreateCollection() {
                     <input
                         className="bg-neutral-900 border border-gray-300 rounded"
                         type={type}
-                        {...register(name as keyof typeof collection.$inferInsert)}
+                        {...register(name as keyof CollectionInsert)}
                     />
                 </div>
             ))}

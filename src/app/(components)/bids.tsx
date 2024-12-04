@@ -1,13 +1,11 @@
 "use client";
 
 import { memo, useEffect, useState } from "react";
-import { bid } from "@/db/schema";
+import type { BidSelect } from "@/types";
 import { useSession } from "next-auth/react";
 import Loading from "../loading";
 import Link from "next/link";
 import toast from "react-hot-toast";
-
-type Bid = typeof bid.$inferSelect;
 
 const fetchBids = async (collectionId: number) => {
     try {
@@ -28,15 +26,15 @@ const updateBidStatus = async (collectionId: number, bidId: number, status: stri
             body: JSON.stringify({ status }),
         });
         if (res.ok) {
-            toast.success(`Bid ${status}`);
+            toast.success(`BidSelect ${status}`);
         }
     } catch (error) {
         console.error(error);
     }
 };
 
-export default memo(({ collectionId, owner }: { collectionId: number; owner: boolean }) => {
-    const [bids, setBids] = useState<Bid[] | undefined>();
+const Bids = memo(({ collectionId, owner }: { collectionId: number; owner: boolean }) => {
+    const [bids, setBids] = useState<BidSelect[] | undefined>();
     const { data: session } = useSession();
 
     useEffect(() => {
@@ -71,8 +69,18 @@ export default memo(({ collectionId, owner }: { collectionId: number; owner: boo
                     )}
                     {owner && (
                         <>
-                            <button onClick={() => updateBidStatus(collectionId, bidItem.id, "accepted")} className="border-green-500 border px-3 text-green-500 rounded">Accept</button>
-                            <button onClick={() => updateBidStatus(collectionId, bidItem.id, "rejected")} className="border-red-500 border text-red-500 px-3 rounded">Reject</button>
+                            <button
+                                onClick={() => updateBidStatus(collectionId, bidItem.id, "accepted")}
+                                className="border-green-500 border px-3 text-green-500 rounded"
+                            >
+                                Accept
+                            </button>
+                            <button
+                                onClick={() => updateBidStatus(collectionId, bidItem.id, "rejected")}
+                                className="border-red-500 border text-red-500 px-3 rounded"
+                            >
+                                Reject
+                            </button>
                         </>
                     )}
                 </div>
@@ -84,3 +92,6 @@ export default memo(({ collectionId, owner }: { collectionId: number; owner: boo
         </div>
     );
 });
+
+Bids.displayName = "Bids";
+export default Bids;

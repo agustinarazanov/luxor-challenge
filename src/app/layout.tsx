@@ -5,7 +5,7 @@ import Navbar from "@/app/(components)/navbar";
 import { Toaster } from "react-hot-toast";
 import SessionProvider from "./(components)/auth";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import authOptions from "@/../auth";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",

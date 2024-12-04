@@ -1,18 +1,18 @@
 "use client";
 
-import { collection } from "@/db/schema";
+import { BidInsert } from "@/types";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function CreateBid() {
-    const { register, handleSubmit } = useForm<typeof collection.$inferInsert>();
+    const { register, handleSubmit } = useForm<BidInsert>();
     const router = useRouter();
     const { collection_id } = useParams();
     const { data: session } = useSession();
 
-    const onSubmit: SubmitHandler<typeof collection.$inferInsert> = async (data) => {
+    const onSubmit: SubmitHandler<BidInsert> = async (data) => {
         const res = await fetch(`/api/collections/${collection_id}/bids`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
