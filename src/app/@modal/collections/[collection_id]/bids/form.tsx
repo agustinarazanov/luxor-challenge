@@ -12,18 +12,16 @@ export default function CreateBid() {
     const { collection_id } = useParams();
     const { data: session } = useSession();
 
-    const onSubmit: SubmitHandler<BidInsert> = async (data) => {
-        const res = await fetch(`/api/collections/${collection_id}/bids`, {
+    const onSubmit: SubmitHandler<BidInsert> = (data) => {
+        fetch(`/api/collections/${collection_id}/bids`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...data, userId: session?.user.id }),
+        }).then((res) => {
+            if (res.ok) toast.success("Bid submitted");
+            else toast.error("Failed to submit bid");
+            router.back();
         });
-        if (res.ok) {
-            toast.success("Bid submitted");
-        } else {
-            toast.error("Failed to submit bid");
-        }
-        router.back();
     };
 
     return (

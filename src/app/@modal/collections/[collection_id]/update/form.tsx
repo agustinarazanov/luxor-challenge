@@ -18,18 +18,16 @@ export default function EditCollection() {
 
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<CollectionInsert> = async (data) => {
-        const res = await fetch(`/api/collections/${collection_id}`, {
+    const onSubmit: SubmitHandler<CollectionInsert> = (data) => {
+        fetch(`/api/collections/${collection_id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...data }),
+        }).then((res) => {
+            if (res.ok) toast.success("Collection updated");
+            else toast.error("Failed to update collection");
+            router.back();
         });
-        if (res.ok) {
-            toast.success("Collection updated");
-        } else {
-            toast.error("Failed to update collection");
-        }
-        router.back();
     };
 
     return (

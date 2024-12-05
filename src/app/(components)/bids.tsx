@@ -24,7 +24,6 @@ const Bids = memo(function ({ collectionId, owner }: { collectionId: number; own
     const { data: session } = useSession();
 
     useEffect(() => {
-        console.log("fetching bids");
         fetch(`/api/collections/${collectionId}/bids`)
             .then((res) => (res.ok ? res.json() : []))
             .then(setBids);

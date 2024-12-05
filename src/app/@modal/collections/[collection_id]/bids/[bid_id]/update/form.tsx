@@ -18,18 +18,16 @@ export default function EditBid() {
 
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<BidInsert> = async (data) => {
-        const res = await fetch(`/api/collections/${collection_id}/bids/${bid_id}`, {
+    const onSubmit: SubmitHandler<BidInsert> = (data) => {
+        fetch(`/api/collections/${collection_id}/bids/${bid_id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...data }),
+        }).then((res) => {
+            if (res.ok) toast.success("Bid updated");
+            else toast.error("Failed to update bid");
+            router.back();
         });
-        if (res.ok) {
-            toast.success("Bid updated");
-        } else {
-            toast.error("Failed to update bid");
-        }
-        router.back();
     };
 
     return (

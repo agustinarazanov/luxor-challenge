@@ -7,17 +7,15 @@ import toast from "react-hot-toast";
 
 export default function DeleteBid() {
     const { handleSubmit } = useForm<BidInsert>();
-    const { collection_id, bid_id } = useParams<{ collection_id: string, bid_id: string }>();
+    const { collection_id, bid_id } = useParams<{ collection_id: string; bid_id: string }>();
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<BidInsert> = async () => {
-        const res = await fetch(`/api/collections/${collection_id}/bids/${bid_id}`, { method: "DELETE" });
-        if (res.ok) {
-            toast.success("Bid removed");
-        } else {
-            toast.error("Failed to remove bid");
-        }
-        router.back();
+    const onSubmit: SubmitHandler<BidInsert> = () => {
+        fetch(`/api/collections/${collection_id}/bids/${bid_id}`, { method: "DELETE" }).then((res) => {
+            if (res.ok) toast.success("Bid removed");
+            else toast.error("Failed to remove bid");
+            router.back();
+        });
     };
 
     return (
