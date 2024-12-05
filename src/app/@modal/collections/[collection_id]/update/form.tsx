@@ -11,14 +11,9 @@ export default function EditCollection() {
     const { collection_id } = useParams<{ collection_id: string }>();
 
     useEffect(() => {
-        async function fetchData() {
-            const res = await fetch(`/api/collections/${collection_id}`);
-            if (res.ok) {
-                const data = await res.json();
-                reset(data);
-            }
-        }
-        fetchData();
+        fetch(`/api/collections/${collection_id}`).then((res) => {
+            if (res.ok) res.json().then((data) => reset(data));
+        });
     }, [collection_id, reset]);
 
     const router = useRouter();
@@ -47,11 +42,7 @@ export default function EditCollection() {
             ].map(({ name, type }, index) => (
                 <div key={index} className="flex flex-col text-sm">
                     <label>{name[0].toUpperCase() + name.slice(1)}</label>
-                    <input
-                        className="bg-neutral-900 border border-gray-300 rounded"
-                        type={type}
-                        {...register(name as keyof CollectionInsert)}
-                    />
+                    <input className="border border-gray-300 rounded" type={type} {...register(name as keyof CollectionInsert)} />
                 </div>
             ))}
             <div className="flex flex-row-reverse gap-2">

@@ -10,14 +10,12 @@ export default function DeleteCollection() {
     const { collection_id } = useParams<{ collection_id: string }>();
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<CollectionInsert> = async () => {
-        const res = await fetch(`/api/collections/${collection_id}`, { method: "DELETE" });
-        if (res.ok) {
-            toast.success("Collection removed");
-        } else {
-            toast.error("Failed to remove collection");
-        }
-        router.back();
+    const onSubmit: SubmitHandler<CollectionInsert> = () => {
+        fetch(`/api/collections/${collection_id}`, { method: "DELETE" }).then((res) => {
+            if (res.ok) toast.success("Collection removed");
+            else toast.error("Failed to remove collection");
+            router.back();
+        });
     };
 
     return (

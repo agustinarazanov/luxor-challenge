@@ -11,18 +11,16 @@ export default function CreateCollection() {
     const router = useRouter();
     const { data: session } = useSession();
 
-    const onSubmit: SubmitHandler<CollectionInsert> = async (data) => {
-        const res = await fetch("/api/collections", {
+    const onSubmit: SubmitHandler<CollectionInsert> = (data) => {
+        fetch("/api/collections", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...data, userId: session?.user.id }),
+        }).then((res) => {
+            if (res.ok) toast.success("Collection created");
+            else toast.error("Failed to create collection");
+            router.back();
         });
-        if (res.ok) {
-            toast.success("Collection created");
-        } else {
-            toast.error("Failed to create collection");
-        }
-        router.back();
     };
 
     return (
@@ -35,11 +33,7 @@ export default function CreateCollection() {
             ].map(({ name, type }, index) => (
                 <div key={index} className="flex flex-col text-sm">
                     <label>{name[0].toUpperCase() + name.slice(1)}</label>
-                    <input
-                        className="bg-neutral-900 border border-gray-300 rounded"
-                        type={type}
-                        {...register(name as keyof CollectionInsert)}
-                    />
+                    <input className="border border-gray-300 rounded" type={type} {...register(name as keyof CollectionInsert)} />
                 </div>
             ))}
             <div className="flex flex-row-reverse gap-2">

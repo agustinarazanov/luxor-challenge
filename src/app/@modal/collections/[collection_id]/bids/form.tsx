@@ -30,7 +30,7 @@ export default function CreateBid() {
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto space-y-4 px-4 pb-4">
             <div className="flex flex-col text-sm">
                 <label>Price</label>
-                <input className="bg-neutral-900 border border-gray-300 rounded" type="number" {...register("price")} />
+                <input className="border border-gray-300 rounded" type="number" {...register("price")} />
             </div>
             <div className="flex flex-row-reverse gap-2">
                 <button
