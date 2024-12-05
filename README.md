@@ -1,6 +1,15 @@
 ## How to run de code
 
-To set up the application, first load the data.sql file located in the root directory into a PostgreSQL server. After loading the data, run the following commands to start the development server:
+To set up the application, first load the data.sql file located in the root directory into a PostgreSQL server. After loading the data, create a .env file with the following variables:
+
+```
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/luxor
+NEXTAUTH_URL=http://localhost:3000
+AUTH_SECRET=
+AUTH_DRIZZLE_URL=postgresql://postgres:postgres@localhost:5432/luxor
+```
+
+Run the following commands to start the development server:
 
 ```
 pnpm i
