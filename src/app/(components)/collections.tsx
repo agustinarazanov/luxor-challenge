@@ -8,22 +8,11 @@ import { useEffect, useState } from "react";
 import Bids from "./bids";
 import Loading from "../loading";
 
-const fetchCollections = async (userId?: string) => {
-    try {
-        const response = await fetch("/api/collections" + (userId ? `?userId=${userId}` : ""));
-        if (response.ok) return await response.json();
-        else return [];
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
-};
-
 function Collections({ collections, owner }: { collections: CollectionSelect[]; owner: boolean }) {
     return (
         <div className="space-y-4">
             {owner ? (
-                <header className="flex justify-between items-center shadow rounded">
+                <header className="flex justify-between items-center rounded">
                     <h1 className="text-3xl">My collections</h1>
                     <button className="border border-blue-500 text-blue-500 px-4 py-2 rounded">
                         <Link href="/collections">Create</Link>
@@ -74,20 +63,22 @@ function Collections({ collections, owner }: { collections: CollectionSelect[]; 
 
 export default function Listing() {
     const { data: session } = useSession();
-    const [collections, setCollections] = useState<CollectionSelect[] | undefined>();
-    const [userCollections, setUserCollections] = useState<CollectionSelect[] | undefined>();
+    const [collections, setCollections] = useState<{ userCollections: CollectionSelect[]; otherCollections: CollectionSelect[] } | undefined>();
 
     useEffect(() => {
-        fetchCollections(session?.user.id).then(setUserCollections);
-        fetchCollections().then(setCollections);
+        const userId = session?.user.id;
+        fetch("/api/collections" + (userId ? `?userId=${userId}` : ""))
+            .then((res) => (res.ok ? res.json() : []))
+            .then(setCollections)
+            .catch(console.error);
     }, [session?.user.id]);
 
-    if (!collections || !userCollections) return <Loading />;
+    if (!collections) return <Loading />;
 
     return (
         <div className="space-y-20">
-            <Collections collections={userCollections} owner={true} />
-            <Collections collections={collections} owner={false} />
+            <Collections collections={collections.userCollections} owner={true} />
+            <Collections collections={collections.otherCollections} owner={false} />
         </div>
     );
 }

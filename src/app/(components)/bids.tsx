@@ -7,38 +7,27 @@ import Loading from "../loading";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
-const fetchBids = async (collectionId: number) => {
-    try {
-        const response = await fetch(`/api/collections/${collectionId}/bids`);
-        if (response.ok) return await response.json();
-        else return [];
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+const updateBidStatus = (collectionId: number, bidId: number, status: string) => {
+    fetch(`/api/collections/${collectionId}/bids/${bidId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+    })
+        .then((res) => {
+            if (res.ok) toast.success(`Bid ${status}`);
+        })
+        .catch(console.error);
 };
 
-const updateBidStatus = async (collectionId: number, bidId: number, status: string) => {
-    try {
-        const res = await fetch(`/api/collections/${collectionId}/bids/${bidId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status }),
-        });
-        if (res.ok) {
-            toast.success(`BidSelect ${status}`);
-        }
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-const Bids = memo(({ collectionId, owner }: { collectionId: number; owner: boolean }) => {
+const Bids = memo(function ({ collectionId, owner }: { collectionId: number; owner: boolean }) {
     const [bids, setBids] = useState<BidSelect[] | undefined>();
     const { data: session } = useSession();
 
     useEffect(() => {
-        fetchBids(collectionId).then(setBids);
+        console.log("fetching bids");
+        fetch(`/api/collections/${collectionId}/bids`)
+            .then((res) => (res.ok ? res.json() : []))
+            .then(setBids);
     }, [collectionId]);
 
     if (!bids) return <Loading />;
