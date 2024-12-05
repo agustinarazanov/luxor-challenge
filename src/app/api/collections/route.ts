@@ -7,17 +7,14 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get("userId");
 
+    if (!userId) {
+        const collections = await drizzle.select().from(collection).orderBy(collection.id);
+        return collections ? NextResponse.json({ collections }) : new NextResponse(null, { status: 404 });
+    }
+
     const [userCollections, otherCollections] = await Promise.all([
-        drizzle
-            .select()
-            .from(collection)
-            .where(userId ? eq(collection.userId, userId) : undefined)
-            .orderBy(collection.id),
-        drizzle
-            .select()
-            .from(collection)
-            .where(userId ? ne(collection.userId, userId) : undefined)
-            .orderBy(collection.id),
+        drizzle.select().from(collection).where(eq(collection.userId, userId)).orderBy(collection.id),
+        drizzle.select().from(collection).where(ne(collection.userId, userId)).orderBy(collection.id),
     ]);
 
     return NextResponse.json({ userCollections, otherCollections });
