@@ -3,10 +3,9 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
-export default function Navbar() {
-    const { data: session } = useSession();
+export default function Navbar({ name }: { name?: string | null }) {
     return (
         <Disclosure as="nav" className="bg-secondary">
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -55,7 +54,7 @@ export default function Navbar() {
                             >
                                 <MenuItem>
                                     <span className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none">
-                                        Logged in as {session?.user.name}
+                                        Logged in as {name}
                                     </span>
                                 </MenuItem>
                                 <MenuItem>
@@ -71,7 +70,6 @@ export default function Navbar() {
                     </div>
                 </div>
             </div>
-
             <DisclosurePanel className="sm:hidden">
                 <div className="space-y-1 px-2 pb-3 pt-2">
                     <DisclosureButton

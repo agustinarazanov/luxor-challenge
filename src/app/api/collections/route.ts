@@ -1,7 +1,7 @@
 import drizzle from "@/db/schema";
 import { collection } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { eq, ne } from "drizzle-orm";
+import { eq, ne, desc } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [userCollections, otherCollections] = await Promise.all([
-        drizzle.select().from(collection).where(eq(collection.userId, userId)).orderBy(collection.id),
+        drizzle.select().from(collection).where(eq(collection.userId, userId)).orderBy(desc(collection.id)),
         drizzle.select().from(collection).where(ne(collection.userId, userId)).orderBy(collection.id),
     ]);
 

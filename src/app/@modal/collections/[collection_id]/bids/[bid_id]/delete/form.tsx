@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteBid } from "@/app/actions";
 import { BidInsert } from "@/types";
 import { useParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -10,12 +11,11 @@ export default function DeleteBid() {
     const { collection_id, bid_id } = useParams<{ collection_id: string; bid_id: string }>();
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<BidInsert> = () => {
-        fetch(`/api/collections/${collection_id}/bids/${bid_id}`, { method: "DELETE" }).then((res) => {
-            if (res.ok) toast.success("Bid removed");
-            else toast.error("Failed to remove bid");
-            router.back();
-        });
+    const onSubmit: SubmitHandler<BidInsert> = async () => {
+        const ok = await deleteBid(collection_id, bid_id);
+        if (ok) toast.success("Bid removed");
+        else toast.error("Failed to remove bid");
+        router.back();
     };
 
     return (

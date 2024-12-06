@@ -1,33 +1,21 @@
 "use client";
 
+import { updateCollection } from "@/app/actions";
 import { CollectionInsert } from "@/types";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export default function EditCollection() {
-    const { register, handleSubmit, reset } = useForm<CollectionInsert>();
+export default function EditCollection({ collection }: { collection?: CollectionInsert }) {
+    const { register, handleSubmit } = useForm<CollectionInsert>({ defaultValues: collection });
     const { collection_id } = useParams<{ collection_id: string }>();
-
-    useEffect(() => {
-        fetch(`/api/collections/${collection_id}`).then((res) => {
-            if (res.ok) res.json().then((data) => reset(data));
-        });
-    }, [collection_id, reset]);
-
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<CollectionInsert> = (data) => {
-        fetch(`/api/collections/${collection_id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...data }),
-        }).then((res) => {
-            if (res.ok) toast.success("Collection updated");
-            else toast.error("Failed to update collection");
-            router.back();
-        });
+    const onSubmit: SubmitHandler<CollectionInsert> = async (data) => {
+        const ok = await updateCollection(data, collection_id);
+        if (ok) toast.success("Collection updated");
+        else toast.error("Failed to update collection");
+        router.back();
     };
 
     return (
@@ -53,9 +41,7 @@ export default function EditCollection() {
                 <button
                     type="button"
                     data-autofocus
-                    onClick={() => {
-                        router.back();
-                    }}
+                    onClick={() => router.back()}
                     className="inline-flex justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semiboldshadow-sm w-auto"
                 >
                     Cancel

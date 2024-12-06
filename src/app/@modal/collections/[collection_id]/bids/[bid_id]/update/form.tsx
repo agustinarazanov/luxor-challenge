@@ -1,33 +1,22 @@
 "use client";
 
+import { updateBid } from "@/app/actions";
 import { BidInsert } from "@/types";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export default function EditBid() {
-    const { register, handleSubmit, reset } = useForm<BidInsert>();
-    const { collection_id, bid_id } = useParams<{ collection_id: string; bid_id: string }>();
-
-    useEffect(() => {
-        fetch(`/api/collections/${collection_id}/bids/${bid_id}`).then((res) => {
-            if (res.ok) res.json().then((data) => reset(data));
-        });
-    }, [collection_id, bid_id, reset]);
+export default function EditBid({ bid }: { bid?: BidInsert }) {
+    const { register, handleSubmit } = useForm<BidInsert>({ defaultValues: bid });
+    const { collection_id, bid_id } = useParams();
 
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<BidInsert> = (data) => {
-        fetch(`/api/collections/${collection_id}/bids/${bid_id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...data }),
-        }).then((res) => {
-            if (res.ok) toast.success("Bid updated");
-            else toast.error("Failed to update bid");
-            router.back();
-        });
+    const onSubmit: SubmitHandler<BidInsert> = async (data) => {
+        const ok = await updateBid(data, collection_id, bid_id);
+        if (ok) toast.success("Bid updated");
+        else toast.error("Failed to update bid");
+        router.back();
     };
 
     return (

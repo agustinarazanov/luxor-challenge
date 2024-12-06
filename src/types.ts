@@ -5,3 +5,4 @@ export type BidSelect = InferSelectModel<typeof bid>;
 export type CollectionSelect = InferSelectModel<typeof collection>;
 export type BidInsert = InferInsertModel<typeof bid>;
 export type CollectionInsert = InferInsertModel<typeof collection>;
+export type BidStatus = "pending" | "accepted" | "rejected";

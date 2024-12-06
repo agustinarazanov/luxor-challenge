@@ -1,26 +1,20 @@
 "use client";
 
+import { createCollection } from "@/app/actions";
 import { CollectionInsert } from "@/types";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export default function CreateCollection() {
+export default function CreateCollection({ userId }: { userId?: string }) {
     const { register, handleSubmit } = useForm<CollectionInsert>();
     const router = useRouter();
-    const { data: session } = useSession();
 
-    const onSubmit: SubmitHandler<CollectionInsert> = (data) => {
-        fetch("/api/collections", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...data, userId: session?.user.id }),
-        }).then((res) => {
-            if (res.ok) toast.success("Collection created");
-            else toast.error("Failed to create collection");
-            router.back();
-        });
+    const onSubmit: SubmitHandler<CollectionInsert> = async (data: CollectionInsert) => {
+        const ok = await createCollection(data, userId);
+        if (ok) toast.success("Collection created");
+        else toast.error("Failed to create collection");
+        router.back();
     };
 
     return (
@@ -46,9 +40,7 @@ export default function CreateCollection() {
                 <button
                     type="button"
                     data-autofocus
-                    onClick={() => {
-                        router.back();
-                    }}
+                    onClick={() => router.back()}
                     className="inline-flex justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semiboldshadow-sm w-auto"
                 >
                     Cancel

@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function Modal({ title, description, children }: { title: string; description: string; children?: React.ReactNode }) {
     const [open, setOpen] = useState(true);

@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteCollection } from "@/app/actions";
 import { CollectionInsert } from "@/types";
 import { useParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -10,12 +11,11 @@ export default function DeleteCollection() {
     const { collection_id } = useParams<{ collection_id: string }>();
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<CollectionInsert> = () => {
-        fetch(`/api/collections/${collection_id}`, { method: "DELETE" }).then((res) => {
-            if (res.ok) toast.success("Collection removed");
-            else toast.error("Failed to remove collection");
-            router.back();
-        });
+    const onSubmit: SubmitHandler<CollectionInsert> = async () => {
+        const ok = await deleteCollection(collection_id);
+        if (ok) toast.success("Collection removed");
+        else toast.error("Failed to remove collection");
+        router.back();
     };
 
     return (
@@ -30,9 +30,7 @@ export default function DeleteCollection() {
                 <button
                     type="button"
                     data-autofocus
-                    onClick={() => {
-                        router.back();
-                    }}
+                    onClick={() => router.back()}
                     className="inline-flex justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semiboldshadow-sm w-auto"
                 >
                     Cancel

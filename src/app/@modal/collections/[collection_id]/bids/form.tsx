@@ -1,27 +1,21 @@
 "use client";
 
+import { createBid } from "@/app/actions";
 import { BidInsert } from "@/types";
-import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export default function CreateBid() {
+export default function CreateBid({ userId }: { userId?: string }) {
     const { register, handleSubmit } = useForm<BidInsert>();
     const router = useRouter();
     const { collection_id } = useParams();
-    const { data: session } = useSession();
 
-    const onSubmit: SubmitHandler<BidInsert> = (data) => {
-        fetch(`/api/collections/${collection_id}/bids`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...data, userId: session?.user.id }),
-        }).then((res) => {
-            if (res.ok) toast.success("Bid submitted");
-            else toast.error("Failed to submit bid");
-            router.back();
-        });
+    const onSubmit: SubmitHandler<BidInsert> = async (data) => {
+        const ok = await createBid(data, collection_id, userId);
+        if (ok) toast.success("Bid submitted");
+        else toast.error("Failed to submit bid");
+        router.back();
     };
 
     return (
@@ -40,9 +34,7 @@ export default function CreateBid() {
                 <button
                     type="button"
                     data-autofocus
-                    onClick={() => {
-                        router.back();
-                    }}
+                    onClick={() => router.back()}
                     className="inline-flex justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-semiboldshadow-sm w-auto"
                 >
                     Cancel
